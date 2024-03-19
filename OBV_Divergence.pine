@@ -1,0 +1,22 @@
+//@version=5
+indicator("OBV Divergence", shorttitle="OBV Div", overlay=true)
+
+// Calculate OBV
+obv = ta.cum(ta.change(close) > 0 ? volume : ta.change(close) < 0 ? -volume : na)
+
+// Find Peaks and Troughs for Price and OBV
+priceHighs = ta.pivothigh(high, 5, 5)
+priceLows = ta.pivotlow(low, 5, 5)
+obvHighs = ta.pivothigh(obv, 5, 5)
+obvLows = ta.pivotlow(obv, 5, 5)
+
+// Divergence Criteria
+bullishDiv = not na(priceLows) and na(obvLows) and close[5] < close[11]
+bearishDiv = not na(priceHighs) and na(obvHighs) and close[5] > close[11]
+
+// Plotting
+plotshape(series=bullishDiv, style=shape.triangleup, location=location.belowbar, color=color.green, size=size.small, title="Bullish Divergence")
+plotshape(series=bearishDiv, style=shape.triangledown, location=location.abovebar, color=color.red, size=size.small, title="Bearish Divergence")
+
+// OBV for reference (optional)
+plot(obv, "OBV", color=color.blue)
